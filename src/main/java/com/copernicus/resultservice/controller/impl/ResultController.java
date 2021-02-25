@@ -34,12 +34,12 @@ public class ResultController implements IResultController {
     private static String statusAuthOk;
 
     @GetMapping("/opportunity-status/{id}")
-    public Status getResult(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader) {
+    public Status getResult(@PathVariable Integer id) {
         return resultService.getResult(id);
     }
 
     @PostMapping("/opportunity-status/{id}")
-    public Integer changeStatus(RequestDTO requestDTO, @RequestHeader(value = "Authorization") String authorizationHeader) {
+    public Integer changeStatus(@RequestBody RequestDTO requestDTO) {
         return resultService.changeStatus(requestDTO);
     }
 

@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 public interface IResultController {
 
-    Status getResult(Integer id, @RequestHeader(value = "Authorization") String authorizationHeader);
-    Integer changeStatus(RequestDTO requestDTO, @RequestHeader(value = "Authorization") String authorizationHeader);
+    Status getResult(Integer id);
+    Integer changeStatus(RequestDTO requestDTO);
 }
