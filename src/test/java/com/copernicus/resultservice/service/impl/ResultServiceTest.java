@@ -30,10 +30,7 @@ class ResultServiceTest {
 
     @Test
     void getResult() {
-        OpportunityDTO opportunityDTO = new OpportunityDTO();
-        Integer id = opportunityDTO.getId();
 
-        assertEquals(id, opportunityClient.getOpportunity(id).getId());
     }
 
     @Test
