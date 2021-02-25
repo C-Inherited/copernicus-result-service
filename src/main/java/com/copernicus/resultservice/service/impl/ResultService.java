@@ -3,6 +3,7 @@ package com.copernicus.resultservice.service.impl;
 import com.copernicus.resultservice.DTO.OpportunityDTO;
 import com.copernicus.resultservice.DTO.RequestDTO;
 import com.copernicus.resultservice.client.OpportunityClient;
+import com.copernicus.resultservice.controller.impl.ResultController;
 import com.copernicus.resultservice.enums.Status;
 import com.copernicus.resultservice.service.interfaces.IResultService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ public class ResultService implements IResultService {
     private final CircuitBreakerFactory circuitBreakerFactory = new Resilience4JCircuitBreakerFactory();
 
     public Status getResult(Integer id) {
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("result-service");
-        return circuitBreaker.run(() -> Status.valueOf(opportunityClient.getOpportunity(id).getStatus()), throwable -> statusCache());
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("opportunity-service");
+        return circuitBreaker.run(() -> Status.valueOf(opportunityClient.getOpportunity(id, "Bearer "+ ResultController.getStatusAuthOk()).getStatus()), throwable -> statusCache());
     }
 
     private Status statusCache() {
@@ -33,10 +34,10 @@ public class ResultService implements IResultService {
     }
 
     public Integer changeStatus(RequestDTO requestDTO) {
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("result-service");
-        OpportunityDTO opportunityDTO = circuitBreaker.run(() -> opportunityClient.getOpportunity(requestDTO.getId()), throwable -> opportunityCache());
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("opportunity-service");
+        OpportunityDTO opportunityDTO = circuitBreaker.run(() -> opportunityClient.getOpportunity(requestDTO.getId(), "Bearer "+ ResultController.getStatusAuthOk()), throwable -> opportunityCache());
         opportunityDTO.setStatus(requestDTO.getStatus());
-        circuitBreaker.run(() -> opportunityClient.postOpportunity(opportunityDTO), throwable -> opportunityCache());
+        circuitBreaker.run(() -> opportunityClient.postOpportunity(opportunityDTO, "Bearer "+ ResultController.getStatusAuthOk()), throwable -> opportunityCache());
         if (Objects.equals(Status.CLOSED_LOST, opportunityDTO.getStatus())){
             return -1;
         }

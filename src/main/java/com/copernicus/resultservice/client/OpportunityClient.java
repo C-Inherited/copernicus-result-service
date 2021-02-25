@@ -1,18 +1,20 @@
 package com.copernicus.resultservice.client;
 
+import com.copernicus.resultservice.DTO.AuthenticationRequest;
 import com.copernicus.resultservice.DTO.OpportunityDTO;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name = "opportunity-service")
 public interface OpportunityClient {
 
     @GetMapping("/opportunity/{id}")
-    public OpportunityDTO getOpportunity(@PathVariable Integer id);
+    OpportunityDTO getOpportunity(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader);
 
     @PostMapping("/opportunity")
-    public OpportunityDTO postOpportunity(@RequestBody OpportunityDTO opportunityDTO);
+    OpportunityDTO postOpportunity(@RequestBody OpportunityDTO opportunityDTO, @RequestHeader(value = "Authorization") String authorizationHeader);
+
+    @PostMapping("opportunity/authenticate")
+    ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest);
 }
